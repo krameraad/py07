@@ -6,25 +6,54 @@ if __name__ == "__main__":
     D = "\033[2m"
     H = "\033[1m"
 
-    game_state = {"mana": 6}
-
     gen = CardGenerator()
     info = gen.get_creature("Fire Dragon")
     dragon = CreatureCard(*[v for k, v in info.items()])
     info = gen.get_creature("Goblin Warrior")
     goblin = CreatureCard(*[v for k, v in info.items()])
 
+    game_state: dict[str, str | dict] = {
+        "active_player": "Alice",
+        "players": {
+            "Alice": {
+                "mana": 6,
+                "field": []
+            },
+            "Bob": {
+                "mana": 3,
+                "field": [goblin]
+            }
+        }
+    }
+
+    alice: dict = game_state["players"]["Alice"]
+    bob: dict = game_state["players"]["Bob"]
+
     print(f"{H}=== DataDeck Card Foundation ==={X}")
     print("Testing abstract base class design...")
+
+    print()
+    print(game_state)
+
     print(f"{D}\nCreatureCard info...{X}")
     print(dragon.get_card_info())
     print(f"{D}\nPlaying {dragon.name}"
-          f" with {game_state["mana"]} mana available...{X}")
-    print("Playable:", dragon.is_playable(game_state["mana"]))
+          f" with {alice["mana"]} mana available...{X}")
+    print("Playable:", dragon.is_playable(alice["mana"]))
     print("Play result:", dragon.play(game_state))
+
+    print()
+    print(game_state)
+
     print(f"{D}\n{dragon.name} attacks {goblin.name}...{X}")
-    print("Attack result:", dragon.attack_target(goblin))
+    print("Attack result:", dragon.attack_target(
+        game_state["players"]["Bob"]["field"][0]))
+
     print(f"{D}\nTesting insufficient mana"
-          f" ({game_state["mana"]} available)...{X}")
-    print("Playable:", dragon.is_playable(game_state["mana"]))
+          f" ({alice["mana"]} available)...{X}")
+    print("Playable:", dragon.is_playable(alice["mana"]))
+
+    print()
+    print(game_state)
+
     print(f"{H}\nAbstract pattern successfully demonstrated!{X}")

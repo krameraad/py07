@@ -21,9 +21,12 @@ class CreatureCard(Card):
 
     def play(self, game_state: dict) -> dict:
         effect = "Failed to summon creature"
-        if self.is_playable(game_state["mana"]):
-            game_state["mana"] -= self.cost
+        active_player = game_state["players"][game_state["active_player"]]
+
+        if self.is_playable(active_player["mana"]):
             effect = "Creature summoned to battlefield"
+            active_player["mana"] -= self.cost
+            active_player["field"].append(self)
         return {
             "card_played": self.name,
             "mana_used": self.cost,
@@ -31,6 +34,7 @@ class CreatureCard(Card):
         }
 
     def attack_target(self, target: "CreatureCard") -> dict:
+        target.health -= self.attack
         return {
             "attacker": self.name,
             "target": target.name,
