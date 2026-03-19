@@ -1,59 +1,48 @@
 from tools.card_generator import CardGenerator
-from ex0.CreatureCard import CreatureCard
+from .CreatureCard import CreatureCard
 
-if __name__ == "__main__":
-    X = "\033[0m"
-    D = "\033[2m"
-    H = "\033[1m"
 
-    gen = CardGenerator()
-    info = gen.get_creature("Fire Dragon")
-    dragon = CreatureCard(*[v for k, v in info.items()])
-    info = gen.get_creature("Goblin Warrior")
-    goblin = CreatureCard(*[v for k, v in info.items()])
+X = "\033[0m"
+D = "\033[2m"
+H = "\033[1m"
 
-    game_state: dict[str, str | dict] = {
-        "active_player": "Alice",
-        "players": {
-            "Alice": {
-                "mana": 6,
-                "field": []
-            },
-            "Bob": {
-                "mana": 3,
-                "field": [goblin]
-            }
+gen = CardGenerator()
+dragon = CreatureCard(**gen.get_creature("Fire Dragon"))
+goblin = CreatureCard(**gen.get_creature("Goblin Warrior"))
+
+game_state: dict[str, str | dict] = {
+    "active_player": "Alice",
+    "players": {
+        "Alice": {
+            "mana": 6,
+            "field": []
+        },
+        "Bob": {
+            "mana": 3,
+            "field": [goblin]
         }
     }
+}
 
-    alice: dict = game_state["players"]["Alice"]
-    bob: dict = game_state["players"]["Bob"]
+alice: dict = game_state["players"]["Alice"]
+bob: dict = game_state["players"]["Bob"]
 
-    print(f"{H}=== DataDeck Card Foundation ==={X}")
-    print("Testing abstract base class design...")
+print(f"{H}=== DataDeck Card Foundation ==={X}")
+print("Testing abstract base class design...")
 
-    print()
-    print(game_state)
+print(f"{D}\nCreatureCard info...{X}")
+print(dragon.get_card_info())
+print(f"{D}\nPlaying {dragon.name}"
+      f" with {alice["mana"]} mana available...{X}")
+print("Playable:", dragon.is_playable(alice["mana"]))
+print("Play result:", dragon.play(game_state))
 
-    print(f"{D}\nCreatureCard info...{X}")
-    print(dragon.get_card_info())
-    print(f"{D}\nPlaying {dragon.name}"
-          f" with {alice["mana"]} mana available...{X}")
-    print("Playable:", dragon.is_playable(alice["mana"]))
-    print("Play result:", dragon.play(game_state))
+print(f"{D}\n{dragon.name} attacks {goblin.name}...{X}")
+print("Attack result:", dragon.attack_target(
+    game_state["players"]["Bob"]["field"][0]))
 
-    print()
-    print(game_state)
+print(f"{D}\nTesting insufficient mana"
+      f" ({alice["mana"]} available)...{X}")
+print("Playable:", dragon.is_playable(alice["mana"]))
 
-    print(f"{D}\n{dragon.name} attacks {goblin.name}...{X}")
-    print("Attack result:", dragon.attack_target(
-        game_state["players"]["Bob"]["field"][0]))
-
-    print(f"{D}\nTesting insufficient mana"
-          f" ({alice["mana"]} available)...{X}")
-    print("Playable:", dragon.is_playable(alice["mana"]))
-
-    print()
-    print(game_state)
-
-    print(f"{H}\nAbstract pattern successfully demonstrated!{X}")
+print(f"{H}\nAbstract pattern successfully demonstrated!{X}")

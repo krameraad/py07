@@ -1,4 +1,4 @@
-from .Card import Card
+from . import Card
 
 
 class CreatureCard(Card):
