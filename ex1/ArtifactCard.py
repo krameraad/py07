@@ -14,18 +14,22 @@ class ArtifactCard(Card):
         self.effect = effect
 
     def play(self, game_state: dict) -> dict:
-        effect = "Failed to play"
         active_player = game_state["players"][game_state["active_player"]]
+        mana = active_player["mana"]
+        if not self.is_playable(mana):
+            raise RuntimeError(
+                self.name
+                + " could not be played: insufficient mana "
+                + f"({mana} available, {self.cost} required)")
 
-        if self.is_playable(active_player["mana"]):
-            effect = "Creature summoned to battlefield"
-            active_player["mana"] -= self.cost
-            active_player["field"].append(self)
+        active_player["mana"] -= self.cost
+        active_player["field"].append(self)
         return {
             "card_played": self.name,
             "mana_used": self.cost,
-            "effect": effect
+            "effect": self.effect
         }
 
     def activate_ability(self) -> dict:
-        pass
+        self.durability -= 1
+        return {"effect": self.effect}

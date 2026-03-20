@@ -1,13 +1,16 @@
 import random
-from . import Card, CreatureCard, ArtifactCard, SpellCard
+
+from . import Card, CreatureCard
+from .ArtifactCard import ArtifactCard
+from .SpellCard import SpellCard
 
 
 class Deck:
+    def __init__(self):
+        self.cards: list[Card] = []
+
     def add_card(self, card: Card) -> None:
-        try:
-            self.cards.append(card)
-        except AttributeError:
-            self.cards: list[Card] = [card]
+        self.cards.append(card)
 
     def remove_card(self, card_name: str) -> bool:
         index = -1
@@ -30,7 +33,10 @@ class Deck:
         creatures = [x for x in self.cards if isinstance(x, CreatureCard)]
         spells = [x for x in self.cards if isinstance(x, SpellCard)]
         artifacts = [x for x in self.cards if isinstance(x, ArtifactCard)]
-        avg_cost = sum([x.cost for x in self.cards]) / len(self.cards)
+        try:
+            avg_cost = sum([x.cost for x in self.cards]) / len(self.cards)
+        except ZeroDivisionError:
+            avg_cost = 0
 
         result = {
             "total_cards": len(self.cards),

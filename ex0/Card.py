@@ -1,4 +1,12 @@
+from enum import IntEnum
 from abc import ABC, abstractmethod
+
+
+class Rarity(IntEnum):
+    COMMON = 10
+    UNCOMMON = 20
+    RARE = 30
+    LEGENDARY = 40
 
 
 class Card(ABC):
